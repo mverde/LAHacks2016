@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Threading;
+using LibNoise.Unity;
 
 [RequireComponent(typeof(Rigidbody), typeof(MeshRenderer), typeof(MeshFilter))]
 public class ProceduralCubeFace : MonoBehaviour
@@ -15,6 +16,7 @@ public class ProceduralCubeFace : MonoBehaviour
     private int[] triangles;
     private Color32[] vertexColors;
     private Biome biome;
+    private float actualRadius;
 
     private void OnDrawGizmos()
     {
@@ -36,6 +38,10 @@ public class ProceduralCubeFace : MonoBehaviour
 
     public void Prepare()
     {
+        LibNoise.Unity.Generator.Perlin perlin = new LibNoise.Unity.Generator.Perlin(1f, 1f, 1f, 4, parentBody.parentBody.biome.terrainGenData.seed, 
+            QualityMode.Medium);
+        actualRadius = Mathf.Lerp(parentBody.parentBody.biome.terrainGenData.lowRadius, parentBody.parentBody.biome.terrainGenData.highRadius,
+            (float)perlin.GetValue(transform.position.x, transform.position.y, transform.position.z));
         gameObject.AddComponent<MeshFilter>();
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
         mesh.name = "Procedural Sphere Side " + face;
@@ -98,7 +104,7 @@ public class ProceduralCubeFace : MonoBehaviour
 
         for (int j = 0; j < repeats; j++)
         {
-            vertices[vertexIndex][j] = s.normalized * biome.terrainGenData.lowRadius;   //TODO: CHANGE TO GENERATED RADIUS
+            vertices[vertexIndex][j] = s.normalized * actualRadius;   //TODO: CHANGE TO GENERATED RADIUS
         }
     }
 
