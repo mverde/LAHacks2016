@@ -23,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 136100}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.3651123, y: 10.077454, z: 4.289459}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -40,8 +40,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidPrefab: {fileID: 188542, guid: a25339dcd05bb0d4f9ef6c6a7af6231b, type: 2}
-  maxAsteroids: 200
-  maxRadius: 2000
+  maxAsteroids: 400
+  maxRadius: 3000
   exclusionRadius: 1200
   noiseScale: 0
   octaves: 0

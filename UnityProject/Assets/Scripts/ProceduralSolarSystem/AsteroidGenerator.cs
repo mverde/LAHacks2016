@@ -15,7 +15,6 @@ public class AsteroidGenerator : MonoBehaviour {
 
     public void Generate()
     {
-        LibNoise.Unity.Generator.Perlin perlin = new LibNoise.Unity.Generator.Perlin(1f, lacunarity, persistance, octaves, seed, QualityMode.Medium);
         Random.seed = seed;
 
         for (int i = 0; i < maxAsteroids; i++)
@@ -26,6 +25,7 @@ public class AsteroidGenerator : MonoBehaviour {
                 GameObject asteroid = Instantiate(asteroidPrefab);
                 asteroid.transform.parent = transform;
                 asteroid.transform.position = randomPos;
+                asteroid.transform.rotation = Random.rotation;
                 CelestialBody asteroidBody = asteroid.GetComponent<CelestialBody>();
                 ProceduralCubeBody proceduralBody = asteroidBody.GetComponent<ProceduralCubeBody>();
                 proceduralBody.Prepare();
