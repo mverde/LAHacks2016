@@ -9,7 +9,7 @@ public class ShipController2 : MonoBehaviour
     //speed stuff
     float speed;
     public int cruiseSpeed;
-    float deltaSpeed;//(speed - cruisespeed)
+    float deltaSpeed;
     public int minSpeed;
     public int maxSpeed;
     float accel, decel;
@@ -43,13 +43,14 @@ public class ShipController2 : MonoBehaviour
 
         //vertical stick adds to the pitch velocity
         //         (*************************** this *******************************) is a nice way to get the square without losing the sign of the value
-        angVel.x -= Input.GetAxisRaw("Mouse Y") * Mathf.Abs(Input.GetAxisRaw("Mouse Y")) * sensitivity * Time.fixedDeltaTime;
+        float mouseX = Mathf.Lerp(-1, 1, Input.mousePosition.x / Screen.width);
+        float mouseY = Mathf.Lerp(-1, 1, Input.mousePosition.y / Screen.height);
+        angVel.x -= mouseY * Mathf.Abs(mouseY) * sensitivity * Time.fixedDeltaTime;
 
         //horizontal stick adds to the roll and yaw velocity... also thanks to the .5 you can't turn as fast/far sideways as you can pull up/down
-        float turn = Input.GetAxisRaw("Mouse X") * Mathf.Abs(Input.GetAxisRaw("Mouse X")) * sensitivity * Time.fixedDeltaTime;
+        float turn = mouseX * Mathf.Abs(mouseX) * sensitivity * Time.fixedDeltaTime;
         angVel.y += turn * .5f;
         angVel.z -= turn * .5f;
-
 
         //shoulder buttons add to the roll and yaw.  No deltatime here for a quick response
         //comment out the .y parts if you don't want to turn when you hit them
@@ -60,7 +61,7 @@ public class ShipController2 : MonoBehaviour
 
 
         //your angular velocity is higher when going slower, and vice versa.  There probably exists a better function for this.
-        angVel /= 1 + deltaSpeed * .001f;
+        angVel /= 1 + speed * .005f;
 
         //this is what limits your angular velocity.  Basically hard limits it at some value due to the square magnitude, you can
         //tweak where that value is based on the coefficient
@@ -69,11 +70,6 @@ public class ShipController2 : MonoBehaviour
 
         //and finally rotate.  
         transform.Rotate(angVel * Time.fixedDeltaTime);
-
-        //this limits your rotation, as well as gradually realigns you.  It's a little convoluted, but it's
-        //got the same square magnitude functionality as the angular velocity, plus a constant since x^2
-        //is very small when x is small.  Also realigns faster based on speed.  feel free to tweak
-        //transform.Rotate(-shipRot.normalized * .015f * (shipRot.sqrMagnitude + 500) * (1 + speed / maxSpeed) * Time.fixedDeltaTime);
 
 
         //LINEAR DYNAMICS//
@@ -96,19 +92,15 @@ public class ShipController2 : MonoBehaviour
         else if (Mathf.Abs(deltaSpeed) > .1f)
             speed -= Mathf.Clamp(deltaSpeed * Mathf.Abs(deltaSpeed), -30, 100) * Time.fixedDeltaTime;
 
+        if (speed < 0)
+            speed = 0;
 
         //moves camera (make sure you're GetChild()ing the camera's index)
         //I don't mind directly connecting this to the speed of the ship, because that always changes smoothly
         Camera.main.transform.localPosition = cameraOffset + new Vector3(0, 0, -deltaSpeed * .02f);
 
-
-        //this takes care of realigning after collisions, where the ship gets displaced due to its rigidbody.
-        //I'm pretty sure this is the best way to do it (have the ship and the rig move toward their mutual center)
-        //transform.Translate(-offsetDir *  20 * Time.fixedDeltaTime);
         //(**************** this ***************) is what actually makes the whole ship move through the world!
         transform.Translate(Vector3.forward * speed * Time.fixedDeltaTime, Space.Self);
-
-        //comment this out for starfox, remove the x and z components for shadows of the empire, and leave the whole thing for free roam
     }
 
     void Update()
