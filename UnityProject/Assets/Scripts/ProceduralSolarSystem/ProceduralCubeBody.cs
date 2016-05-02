@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Threading;
+using LibNoise.Unity;
 
 public class ProceduralCubeBody : MonoBehaviour
 {
@@ -78,8 +78,13 @@ public class ProceduralCubeBody : MonoBehaviour
         heightMap = null;
         if (shouldGenerateTerrain)
         {
-            heightMap = PerlinNoise3D.GenerateVertexHeightMap(faceVertices, biome.terrainGenData.seed, biome.terrainGenData.noiseScale, biome.terrainGenData.octaves, 
-                biome.terrainGenData.persistance, biome.terrainGenData.lacunarity, biome.terrainGenData.offset);
+            TerrainGenData terrainData = biome.terrainGenData;
+            LibNoise.Unity.Generator.Perlin perlin = new LibNoise.Unity.Generator.Perlin(1f, 1f, 1f, 4, terrainData.seed,
+                QualityMode.Medium);
+            float actualRadius = Mathf.Lerp(terrainData.lowRadius, terrainData.highRadius,
+                (float)perlin.GetValue(transform.position.x, transform.position.y, transform.position.z));
+            heightMap = PerlinNoise3D.GenerateVertexHeightMap(faceVertices, terrainData.seed, terrainData.noiseScale * Mathf.Pow(Mathf.Abs((actualRadius - terrainData.lowRadius) / ((terrainData.highRadius - terrainData.lowRadius))), 0.5f), 
+                terrainData.octaves, terrainData.persistance, terrainData.lacunarity, terrainData.offset);
         }
         for (int i = 0; i < faceComponents.Length; i++)
         {

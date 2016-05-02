@@ -85,7 +85,7 @@ MonoBehaviour:
         serializedVersion: 2
         rgba: 8618883
     terrainGenData:
-      gridSize: 10
+      gridSize: 6
       lowRadius: 10
       highRadius: 25
       levelOfDetail: 0

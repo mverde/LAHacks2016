@@ -90,7 +90,7 @@ public class ShipController2 : MonoBehaviour
         //if not accelerating or decelerating, tend toward cruise, using a similar principle to the accelerations above
         //(added clamping since it's more of a gradual slowdown/speedup)
         else if (Mathf.Abs(deltaSpeed) > .1f)
-            speed -= Mathf.Clamp(deltaSpeed * Mathf.Abs(deltaSpeed), -30, 100) * Time.fixedDeltaTime;
+            //speed -= Mathf.Clamp(deltaSpeed * Mathf.Abs(deltaSpeed), -30, 100) * Time.fixedDeltaTime;
 
         if (speed < 0)
             speed = 0;
